@@ -1,9 +1,10 @@
 import { useState } from "react";
 
-function Square({ value, onSquareClick }) {
+function Square({ value, onSquareClick, winning=false }) {
+  let squareClass = "square " + (winning ? "winning-square " : "");
   return (
     <button
-      className="square"
+      className={squareClass}
       onClick={onSquareClick}
     >
       {value}
@@ -11,7 +12,10 @@ function Square({ value, onSquareClick }) {
 }
 
 function Board({ xIsNext, squares, onPlay }) {
-  const winner = calculateWinner(squares);
+  const winningDetails = calculateWinner(squares);
+  const winner = winningDetails ? winningDetails.winner : null;
+  const winningPlay = winningDetails ? winningDetails.winningSquares : [];
+  
   let status;
   if (winner) {
     status = "Winner: " + winner;
@@ -41,6 +45,7 @@ function Board({ xIsNext, squares, onPlay }) {
           key={squareCountIndex}
           value={squares[squareCountIndex]}
           onSquareClick={() => handleClick(squareCountIndex)}
+          winning={winningPlay.includes(squareCountIndex)}
         />
       )
     })
@@ -60,6 +65,8 @@ function Board({ xIsNext, squares, onPlay }) {
 export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
+  const [orderIsDescending, setOrderIsDescending] = useState(true);
+  const orderLabel = orderIsDescending ? "Descending Order" : "Ascending Order"; 
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
@@ -71,6 +78,10 @@ export default function Game() {
 
   function jumpTo(nextMove) {
     setCurrentMove(nextMove);
+  }
+
+  function reverseOrder() {
+    setOrderIsDescending(!orderIsDescending);
   }
 
   const moves = history.map((squares, move) => {
@@ -90,14 +101,23 @@ export default function Game() {
         {description}
       </li>
     )
-  })
+  });
+
+
   return (
     <div className="game">
       <div className="game-board">
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <ul>{moves}</ul>
+        <div className="toggle-info">
+          <label className="switch">
+            <input type="checkbox" onClick={reverseOrder}/>
+            <span className="slider round"></span>
+          </label>
+          <p>{orderLabel}</p>
+        </div>
+        <ul>{orderIsDescending ? moves : moves.slice().reverse()}</ul>
       </div>
     </div>
   )
@@ -117,7 +137,7 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      return { winner: squares[a], winningSquares: lines[i]}
     }
   }
   return null;
