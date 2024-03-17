@@ -2,7 +2,7 @@
 
 I wanted to revisit this tutorial to see how it has been updated since I first worked through it as part of Academy Pittsburgh bootcamp curriculum with class components.
 
-[Helpful article] (https://seanaujong.medium.com/implementing-the-react-tic-tac-toe-challenges-ed57d7ae4f67) for the extra steps.
+[Helpful article](https://seanaujong.medium.com/implementing-the-react-tic-tac-toe-challenges-ed57d7ae4f67) for the extra steps.
 
 ## TODO Extra Challenges
 - [X] For the current move only, show “You are at move #…” instead of a button.
